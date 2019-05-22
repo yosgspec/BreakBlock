@@ -60,19 +60,19 @@ namespace BreakBlock{
 		public float bottom{get{return (float)pos.Y+radius;}}
 
 		public Ball(List<IDrow> shps,int radius,Vector pos,float deg,float speed,string color){
-			ready(shps,radius,pos,deg,speed,color);
-		}
-
-		void ready(List<IDrow> shps,int radius,Vector pos,float deg,float speed,string color){
 			this.shps=shps;
 			this.radius=radius;
-			this.pos=pos;
+			this.color=color;
 			pos0=pos;
 			this.deg=deg;
-			this.rad=(float)(deg/180*Math.PI);
-			this.speed=speed;
 			speed0=speed;
-			this.color=color;
+			ready();
+		}
+
+		void ready(){
+			pos=pos0;
+			rad=(float)(deg/180*Math.PI);
+			speed=speed0;
 
 			ball=new Ellipse();
 			Win.field.Children.Add(ball);
@@ -101,7 +101,7 @@ namespace BreakBlock{
 			//ボールロスト
 			if(Win.field.Height<top){
 				Win.field.Children.Remove(ball);
-				ready(shps,radius,pos0,deg,speed0,color);
+				ready();
 				return;
 			}
 
@@ -109,7 +109,7 @@ namespace BreakBlock{
 			for(var i=shps.Count-1;0<=i;i--){
 				if(shps[i].vsCircle(pos,radius)){
 					(rad,speed)=shps[i].hit(rad,speed);
-					if(shps[i].GetType()==typeof(Paddle)) continue;
+					if(shps[i].GetType()!=typeof(Block)) continue;
 					Win.field.Children.Remove(shps[i].shp);
 					shps.RemoveAt(i);
 				}
@@ -207,23 +207,15 @@ namespace BreakBlock{
 		//理解できていないメソッド
 		public static bool lineVsCircle(Vector[] p,Vector center,float radius){
 			Vector lineDir=p[1]-p[0];					// パドルの方向ベクトル
-			Console.WriteLine(lineDir);
 			Vector n=new Vector(lineDir.Y, -lineDir.X);	// パドルの法線
-			Console.WriteLine(n);
 			n.Normalize();
-			Console.WriteLine(n);
 
 			Vector dir1=center-p[0];
-			Console.WriteLine(dir1);
 			Vector dir2=center-p[1];
-			Console.WriteLine(dir2);
 
 			double dist=Math.Abs(dotProduct(dir1,n));
-			Console.WriteLine(dist);
 			double a1=dotProduct(dir1,lineDir);
-			Console.WriteLine(a1);
 			double a2=dotProduct(dir2,lineDir);
-			Console.WriteLine(a2);
 
 			return (a1*a2<0 && dist<radius)? true: false;
 		}
@@ -270,7 +262,6 @@ namespace BreakBlock{
 			(radB,speedB)=base.hit(radB,speedB);
 			return ((float)(radB+Math.Cos(rad)*speed/180*Math.PI),speedB);
 		}
-
 	}
 
 	//キーボードの状態を管理するやつ
@@ -312,9 +303,6 @@ namespace BreakBlock{
 				}
 			}
 			var ball=new Ball(shps,10,new Vector(Field.Width/2,300),90,10,"#FF00FF");
-
-			Console.WriteLine(Block.lineVsCircle(new[]{new Vector(10,10),new Vector(90,10)},new Vector(76,166),10));
-			return;
 
 			//インターバル
 			var timer=new DispatcherTimer();
