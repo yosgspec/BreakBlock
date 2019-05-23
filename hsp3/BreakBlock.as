@@ -20,7 +20,7 @@
 	return
 #global
 
-#module Ball \
+#module Ball type, \
 	shps,\
 	__radius,\
 	__pos,pos0,\
@@ -49,8 +49,7 @@
 
 	#define new(%1,%2,%3,%4,%5,%6,%7,%8,%9,%10) dimtype %1,5: newmod %1,Ball,%2,%3,%4,%5,%6,%7,%8,%9,%10
 	#modinit array _shps,double _radius,double posX,double posY,double _deg,double _speed,int _R,int _G,int _B
-		;dimtype shps,5,length(_shps)
-		;foreach _shps: shps.cnt=_shps(cnt): loop
+		type="Ball"
 		shps=_shps
 		__radius=_radius
 		pos0=posX,posY
@@ -100,11 +99,11 @@
 #module Block type,\
 	__size,\
 	__pos,\
-	deg,__rad,\
-	__speed,\
 	clr,\
 	virtual_update,\
-	lastHit0,lastHit1
+	virtual_hit,\
+	lastHit0,lastHit1,\
+	__rad,accel,__speed
 
 	#modcfunc getType
 		return type
@@ -121,7 +120,8 @@
 		__size=sizeX,sizeY :\
 		__pos=posX,posY :\
 		clr=_R,_G,_B :\
-		virtual_update=*override_update
+		virtual_update=*override_update :\
+		virtual_hit=*override_hit
 
 	#define news(%1,%2,%3,%4,%5,%6,%7,%8) newmod %1,Block,%2,%3,%4,%5,%6,%7,%8
 	#modinit double sizeX,double sizeY,double posX,double posY,int _R,int _G,int _B
@@ -134,10 +134,10 @@
 	return
 
 	*override_update
-		drow thismod
+		draw thismod
 	return
 
-	#modfunc local drow
+	#modfunc local draw
 		color clr.R,clr.G,clr.B
 		boxf bkLeft(thismod),bkTop(thismod),bkRight(thismod),bkBottom(thismod)
 	return
@@ -198,52 +198,86 @@
 		a2=dotProduct(dir2,lineDir)
 	if a1*a2<0 & dist<radius: return 1: else: return 0
 
-
-	//当たると反射する
 	#modfunc hit var _rad,var _speed
+		radB=_rad: speedB=_speed
+		gosub virtual_hit
+		_rad=radB: _speed=speedB
+	return
+
+	;当たると反射する
+	*override_hit
 		_x=lastHit1.X-lastHit0.X
 		_y=lastHit1.Y-lastHit0.Y
-		_line=cos(atan(_x,_y))
-		_rad=_line*M_PI-_rad
+		_line=1.0+cos(atan(_y,_x))
+		radB=_line*M_PI-radB
 	return
 #global
 
 #module Paddle type,\
 	__size,\
 	__pos,\
-	deg,__rad,\
-	__speed,\
 	clr,\
 	virtual_update,\
-	lastHit0,lastHit1
+	virtual_hit,\
+	lastHit0,lastHit1,\
+	__rad,accel,__speed
 
-	#define news(%1,%2,%3,%4,%5,%6,%7,%8) newmod %1,Paddle,%2,%3,%4,%5,%6,%7,%8
-	#modinit double sizeX,double sizeY,double posX,double posY,int _R,int _G,int _B
+	#define ctype me(%1) %1@Block
+	#define news(%1,%2,%3,%4,%5,%6,%7,%8,%9) newmod %1,Paddle,%2,%3,%4,%5,%6,%7,%8,%9
+	#modinit double sizeX,double sizeY,double posX,double posY,int _R,int _G,int _B,double _accel
 		type="Paddle"
 		super@Block
+		dim __rad
+		accel=_accel
+		dim __speed
 	return
 
+	;うごく
+	#const keyLeft 37
+	#const keyUp 38
+	#const keyRight 39
+	#const keyBottom 40
 	*override_update
-		drow@Block thismod
+		dim leftDown: getkey leftDown,keyLeft
+		dim rightDown: getkey rightDown,keyRight
+		if leftDown & 0<bkLeft(thismod) {
+			me(__speed)=me(accel)
+			me(__rad)=M_PI
+			me(__pos).X-=me(__speed)
+		}
+		else:if rightDown & bkRight(thismod)<fdWidth {
+			me(__speed)=me(accel)
+			me(__rad)=0
+			me(__pos).X+=me(__speed)
+		}
+		else: me(__speed)=0
+
+		draw@Block thismod
+	return
+
+	;パドルのスピードでボールに変化をもたらす存在
+	*override_hit
+		gosub*override_hit@Block
+		me(radB)=me(radB)+cos(me(__rad))*me(__speed)/180*M_PI
 	return
 #global
 
 #module MainWindow
 	#deffunc local Main
 		dimtype _shps,5
-		news@Paddle _shps,700,5,fdWidth/2,fdHeight-50,$99,$99,$FF
+		news@Paddle _shps,100,5,fdWidth/2,fdHeight-50,$99,$99,$FF,20
 		;shps.Add(new Paddle(new Vector(100,5),new Vector(Field.Width/2,this.Height-50),"#9999FF",20))
-		repeat 5: i=cnt
-			repeat 4
-				news@Block _shps,70,20,80+i*115,50+cnt*40,$33,$99,$FF
+		repeat 7: i=cnt
+			repeat 5
+				news@Block _shps,80,30,50+i*90,25+cnt*40,$33,$99,$FF
 			loop
 		loop
 		new@MList shps,_shps
-		new@Ball _ball,shps,10,fdWidth/2,300,210,10,$FF,$00,$FF
+		new@Ball _ball,shps,10,fdWidth/2,300,90,10,$FF,$00,$FF
 
 		p1=10,10: p2=90,10: _pos=76,166
 		mes lineVsCircle@Block(p1,p2,_pos,10)
-		
+
 		;インターバル
 		*interval
 			redraw 0

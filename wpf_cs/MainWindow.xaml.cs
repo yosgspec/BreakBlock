@@ -28,7 +28,7 @@ using System.Windows.Threading;
 
 namespace BreakBlock{
 	//配置オブジェクトのインターフェース
-	interface IDrow{
+	interface IDraw{
 		Shape shp{set;get;}
 		float left{get;}
 		float top{get;}
@@ -40,8 +40,8 @@ namespace BreakBlock{
 	}
 
 	//ボールクラス
-	class Ball: IDrow{
-		List<IDrow> shps;
+	class Ball: IDraw{
+		List<IDraw> shps;
 		public Ellipse ball;
 		public Shape shp{set;get;}
 		public int radius;
@@ -59,7 +59,7 @@ namespace BreakBlock{
 		public float right{get{return (float)pos.X+radius;}}
 		public float bottom{get{return (float)pos.Y+radius;}}
 
-		public Ball(List<IDrow> shps,int radius,Vector pos,float deg,float speed,string color){
+		public Ball(List<IDraw> shps,int radius,Vector pos,float deg,float speed,string color){
 			this.shps=shps;
 			this.radius=radius;
 			this.color=color;
@@ -80,7 +80,7 @@ namespace BreakBlock{
 			ball.Height=radius*2;
 			ball.Fill=new SolidColorBrush((Color)ConvertFromString(color));
 			shp=(Shape)ball;
-			drow();
+			Draw();
 			isStart=Task.Delay(1500);
 		}
 
@@ -115,10 +115,10 @@ namespace BreakBlock{
 				}
 			}
 			rad%=(float)(2*Math.PI);
-			drow();
+			Draw();
 		}
 
-		void drow(){
+		void Draw(){
 			Canvas.SetLeft(ball,left);
 			Canvas.SetTop(ball,top);
 		}
@@ -140,7 +140,7 @@ namespace BreakBlock{
 	}
 
 	//ブロッククラス
-	class Block: IDrow{
+	class Block: IDraw{
 		public Rectangle block;
 		public Shape shp{set;get;}
 		public Vector size;
@@ -165,10 +165,10 @@ namespace BreakBlock{
 		}
 
 		public virtual void update(){
-			drow();
+			Draw();
 		}
 
-		protected void drow(){
+		protected void Draw(){
 			Canvas.SetLeft(block,left);
 			Canvas.SetTop(block,top);
 		}
@@ -221,12 +221,12 @@ namespace BreakBlock{
 		}
 
 		//当たると反射する
-		public virtual (float,float) hit(float rad,float speed){
-			var line=(float)(1+Math.Cos(Math.Atan2(
-				lastHit[1].Y-lastHit[0].Y,
-				lastHit[1].X-lastHit[0].X
-			)));
-			return ((float)(line*Math.PI-rad),speed);
+		public virtual (float,float) hit(float radB,float speedB){
+			var x=lastHit[1].X-lastHit[0].X;
+			var y=lastHit[1].Y-lastHit[0].Y;
+			var line=(float)(1+Math.Cos(Math.Atan2(y,x)));
+			radB=(float)(line*Math.PI-radB);
+			return (radB,speedB);
 		}
 	}
 
@@ -254,7 +254,7 @@ namespace BreakBlock{
 			}
 			else speed=0;
 
-			drow();
+			Draw();
 		}
 
 		//パドルのスピードでボールに変化をもたらす存在
@@ -290,12 +290,12 @@ namespace BreakBlock{
 
 	//メインクラス
 	public partial class MainWindow: Window{
-		List<IDrow> shps;
+		List<IDraw> shps;
 		public MainWindow(){
 			InitializeComponent();
 
 			Win.field=Field;
-			shps=new List<IDrow>();
+			shps=new List<IDraw>();
 			shps.Add(new Paddle(new Vector(100,5),new Vector(Field.Width/2,this.Height-50),"#9999FF",20));
 			for(var i=0;i<7;i++){
 				for(var n=0;n<5;n++){
