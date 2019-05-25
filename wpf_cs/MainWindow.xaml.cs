@@ -53,6 +53,7 @@ namespace BreakBlock{
 		float speed0;
 		Task isStart;
 		string color;
+		bool isCleared;
 
 		public float left{get{return (float)pos.X-radius;}}
 		public float top{get{return (float)pos.Y-radius;}}
@@ -123,7 +124,9 @@ namespace BreakBlock{
 			Canvas.SetTop(ball,top);
 		}
 
+		//クリア処理
 		void clear(){
+			if(isCleared) return;
 			Win.field.Children.Remove(ball);
 			var tb=new TextBlock();
 			Win.field.Children.Add(tb);
@@ -132,7 +135,7 @@ namespace BreakBlock{
 			tb.Foreground=new SolidColorBrush((Color)ConvertFromString("#AAAAFF"));
 			Canvas.SetLeft(tb,Win.field.Width/2-100);
 			Canvas.SetTop(tb,Win.field.Height/2-50);
-			return;
+			isCleared=true;
 		}
 
 		public bool vsCircle(Vector center,float radius){return false;}
@@ -296,7 +299,7 @@ namespace BreakBlock{
 
 			Win.field=Field;
 			shps=new List<IDraw>();
-			shps.Add(new Paddle(new Vector(100,5),new Vector(Field.Width/2,this.Height-50),"#9999FF",20));
+			shps.Add(new Paddle(new Vector(100,5),new Vector(Field.Width/2,Field.Height-50),"#9999FF",20));
 			for(var i=0;i<7;i++){
 				for(var n=0;n<5;n++){
 					shps.Add(new Block(new Vector(80,30),new Vector(50+i*90,25+n*40),"#3399FF"));
@@ -306,7 +309,7 @@ namespace BreakBlock{
 
 			//インターバル
 			var timer=new DispatcherTimer();
-			timer.Interval=TimeSpan.FromMilliseconds(33);
+			timer.Interval=TimeSpan.FromMilliseconds(30);
 			timer.Tick+=(sender,e)=>{
 				foreach(var v in shps){
 					v.update();

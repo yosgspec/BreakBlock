@@ -1,3 +1,16 @@
+/*******************************************************************************
+	ブロック崩し
+	参考: http://nn-hokuson.hatenablog.com/entry/2017/08/17/200918
+
+	.NetCore/WPFで制作し、各クラス化とか速度の分解と角度の追加とか。
+	ゲームとか殆ど作ったことがない人が作ったガラクタ。
+	もう当たり判定全部短形でいいんじゃないかなとか。
+	なんか斜めからボールが入ると当たり判定がガタガタになる。
+
+	のHSP版。なんかWPF版よりもゲームスピードが速い。
+*******************************************************************************/
+
+;モジュール型変数用コンテナ
 #module MList list,count
 	#modcfunc mlCount
 		return count
@@ -7,8 +20,6 @@
 		dimtype list,5,count
 		foreach ary: list.cnt=ary.cnt: loop
 	return
-	#modfunc mlSet int index,var item
-		list.index=item: return
 	#modfunc local mlRef int index,var item
 		item=list.index: return
 	#define global mlRef(%1,%2,%3) dimtype %3,5: mlRef@MList %1,%2,%3
@@ -20,6 +31,7 @@
 	return
 #global
 
+;ボールモジュール
 #module Ball type, \
 	shps,\
 	__radius,\
@@ -27,7 +39,8 @@
 	deg,__rad,\
 	__speed,speed0,\
 	startTime,\
-	clr
+	clr,\
+	isCleared
 
 	#uselib "winmm"
 	#cfunc timeGetTime "timeGetTime"
@@ -60,6 +73,12 @@
 	return
 
 	#modfunc blUpdate
+		;クリア判定
+		if mlCount(shps)<=1 {
+			clear thismod
+			return
+		}
+
 		;動くのは用意してからちょっと待つ
 		if timeGetTime()<startTime: drow thismod: return
 		;ボール
@@ -94,8 +113,18 @@
 		color clr.R,clr.G,clr.B
 		circle blLeft(thismod),blTop(thismod),blRight(thismod),blBottom(thismod)
 	return
+
+	;クリア処理
+	#modfunc clear
+		if isCleared: return
+		font "メイリオ",72
+		color $AA,$AA,$FF
+		pos fdWidth/2-100,fdHeight/2-50
+		mes "Clear!"
+	return
 #global
 
+;ブロックモジュール
 #module Block type,\
 	__size,\
 	__pos,\
@@ -155,12 +184,10 @@
 	#modcfunc vsCircle array bPos,double _radius
 		rtn=0
 		getLines thismod,l0,l1
-		;v0=l0.X.2,l0.Y.2: v1=l1.X.2,l1.Y.2
-		;lastHit0=v0.X,v0.Y: lastHit1=v1.X,v1.Y
-		;return lineVsCircle(v0,v1,bPos,_radius)
 
 		repeat length2(l0)
-			v0=l0.X.cnt,l0.Y.cnt: v1=l1.X.cnt,l1.Y.cnt
+			v0=l0.X.cnt,l0.Y.cnt
+			v1=l1.X.cnt,l1.Y.cnt
 			if lineVsCircle(v0,v1,bPos,_radius) {
 				if v0.X=v1.X {
 					if v0.X=bkLeft(thismod) {bPos.X=bkLeft(thismod)-_radius}
@@ -213,6 +240,7 @@
 	return
 #global
 
+;パドルモジュール キーボードで動かせる
 #module Paddle type,\
 	__size,\
 	__pos,\
@@ -262,11 +290,11 @@
 	return
 #global
 
+;メインモジュール
 #module MainWindow
 	#deffunc local Main
 		dimtype _shps,5
 		news@Paddle _shps,100,5,fdWidth/2,fdHeight-50,$99,$99,$FF,20
-		;shps.Add(new Paddle(new Vector(100,5),new Vector(Field.Width/2,this.Height-50),"#9999FF",20))
 		repeat 7: i=cnt
 			repeat 5
 				news@Block _shps,80,30,50+i*90,25+cnt*40,$33,$99,$FF
