@@ -10,6 +10,12 @@
 	のHSP版。なんかWPF版よりもゲームスピードが速い。
 *******************************************************************************/
 
+#enum global X=0
+#enum global Y
+#enum global R=0
+#enum global G
+#enum global B
+
 ;モジュール型変数用コンテナ
 #module MList list,count
 	#modcfunc mlCount
@@ -80,7 +86,7 @@
 		}
 
 		;動くのは用意してからちょっと待つ
-		if timeGetTime()<startTime: drow thismod: return
+		if timeGetTime()<startTime: draw thismod: return
 		;ボール
 		__pos.X+=cos(__rad)*__speed
 		__pos.Y+=sin(__rad)*__speed
@@ -106,10 +112,10 @@
 			}
 		loop
 		rad\=2*M_PI
-		drow thismod
+		draw thismod
 	return
 
-	#modfunc local drow
+	#modfunc local draw
 		color clr.R,clr.G,clr.B
 		circle blLeft(thismod),blTop(thismod),blRight(thismod),blBottom(thismod)
 	return
@@ -204,7 +210,8 @@
 	return rtn
 
 	;ないせき
-	#define ctype dotProduct(%1,%2) %1(X)*%2(X)+%1(Y)*%2(Y)
+	#define ctype dot(%1,%2) %1(X)*%2(X)+%1(Y)*%2(Y)
+	;ベクトルの正規化
     #define normalize(%1) %tnormalize \
 		%i=sqrt(powf(%1(X),2)+powf(%1(y),2)) :\
 		%1(X)/=%p :\
@@ -213,17 +220,17 @@
 	;線と円の当たり判定
 	;理解できていないメソッド
 	#defcfunc local lineVsCircle array p0,array p1,array center,double radius
-		lineDir=p1.X-p0.X, p1.Y-p0.Y	; パドルの方向ベクトル
-		n=lineDir.Y,-lineDir.X			; パドルの法線
+		lineDir=p1.X-p0.X, p1.Y-p0.Y ; パドルの方向ベクトル
+		n=lineDir.Y, -lineDir.X      ; パドルの法線
 		normalize n
 
 		dir1=center.X-p0.X, center.Y-p0.Y
 		dir2=center.X-p1.X, center.Y-p1.Y
 
-		dist=abs(dotProduct(dir1,n))
-		a1=dotProduct(dir1,lineDir)
-		a2=dotProduct(dir2,lineDir)
-	if a1*a2<0 & dist<radius: return 1: else: return 0
+		dist=abs(dot(dir1,n))
+		a1=dot(dir1,lineDir)
+		a2=dot(dir2,lineDir)
+	return a1*a2<0 & dist<radius
 
 	#modfunc hit var _rad,var _speed
 		radB=_rad: speedB=_speed
