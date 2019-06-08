@@ -25,6 +25,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using BBUtil;
 
 namespace BreakBlock{
 	//配置オブジェクトのインターフェース
@@ -148,7 +149,7 @@ namespace BreakBlock{
 		Rectangle block;
 		public Shape shp{set;get;}
 		public Vector size;
-		protected Vector pos;
+		public Vector pos;
 		Vector[] lastHit;
 
 		public float left{get{return (float)(pos.X-size.X/2);}}
@@ -269,38 +270,16 @@ namespace BreakBlock{
 		}
 	}
 
-	//キーボードの状態を管理するやつ
-	static class CursorKey{
-		public static bool up;
-		public static bool left;
-		public static bool right;
-		public static bool down;
-
-		public static Action<KeyEventArgs> keyDown=keyState(true);
-		public static Action<KeyEventArgs> keyUp=keyState(false);
-		static Action<KeyEventArgs> keyState(bool state){
-			return new Action<KeyEventArgs>(e=>{
-				switch(e.Key){
-					case Key.Up: up=state; break;
-					case Key.Left: left=state; break;
-					case Key.Right: right=state; break;
-					case Key.Down: down=state; break;
-				}
-			});
-		}
-	}
-
 	//ボールフィールドを静的に配置するための何か
 	class Win{public static Canvas Field;}
 
 	//メインクラス
 	public partial class MainWindow: Window{
-		List<IDraw> shps;
 		public MainWindow(){
 			InitializeComponent();
 
 			Win.Field=Field;
-			shps=new List<IDraw>();
+			var shps=new List<IDraw>();
 			shps.Add(new Paddle(new Vector(100,5),new Vector(Field.Width/2,Field.Height-50),"#9999FF",20));
 			for(var i=0;i<7;i++){
 				for(var n=0;n<5;n++){

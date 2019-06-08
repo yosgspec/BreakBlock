@@ -5,9 +5,9 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:testbk"
 		mc:Ignorable="d"
-		Title="BreakBlock" Height="518" Width="656"
+		Title="BreakBlock" Width="656" Height="518"
 		ResizeMode="NoResize"
 		PreviewKeyDown="keyDown"
 		PreviewKeyUp="keyUp">
-	<Canvas Name="Field" Height="480" Width="640" Background="#000099"></Canvas>
+	<Canvas Name="Field" Width="640" Height="480" Background="#000099"></Canvas>
 </Window>
