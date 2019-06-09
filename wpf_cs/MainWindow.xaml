@@ -10,4 +10,9 @@
 		PreviewKeyDown="keyDown"
 		PreviewKeyUp="keyUp">
 	<Canvas Name="Field" Width="640" Height="480" Background="#000099"></Canvas>
+	<x:Code><![CDATA[
+		//キーイベント
+		void keyDown(object sender,KeyEventArgs e){BBUtil.CursorKey.keyDown(e);}
+		void keyUp(object sender,KeyEventArgs e){BBUtil.CursorKey.keyUp(e);}
+	]]></x:Code>
 </Window>

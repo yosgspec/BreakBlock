@@ -50,18 +50,28 @@
 #enum global X=0
 #enum global Y
 ;ベクトル加算
-#define global ctype vecAdd(%1,%2) %1(X)+%2(X),%1(Y)+%2(Y)
+#define global ctype vcAdd(%1,%2) \
+	%1(X)+%2(X),%1(Y)+%2(Y)
+#define global vcAddSet(%1,%2) \
+	%1(X),%1(Y)=%1(X)+%2(X),%1(Y)+%2(Y)
 ;ベクトル減算
-#define global ctype vecSub(%1,%2) %1(X)-%2(X),%1(Y)-%2(Y)
+#define global ctype vcSub(%1,%2) \
+	%1(X)-%2(X),%1(Y)-%2(Y)
+#define global vcSubSet(%1,%2) \
+	%1(X),%1(Y)=%1(X)-%2(X),%1(Y)-%2(Y)
 ;ないせき
-#define global ctype vecDot(%1,%2) %1(X)*%2(X)+%1(Y)*%2(Y)
+#define global ctype vcDot(%1,%2) \
+	%1(X)*%2(X)+%1(Y)*%2(Y)
 ;ベクトルの正規化
-#define global vecNormalize(%1) %tvecNormalize \
+#define global vcNormalize(%1) %tvecNormalize \
 	%i=sqrt(powf(%1(X),2)+powf(%1(Y),2)) :\
 	%1(X)/=%p :\
 	%1(Y)/=%o
 ;ベクトルのコピー
-#define global vecCopy(%1,%2) %1=%2(X),%2(Y)
+#define global vcClone(%1,%2) \
+	%1=%2(X),%2(Y)
+;ベクトルの文字列化
+#define global ctype vcStr(%1) strf("Vector(%%.1f, %%.1f)",%1(X),%1(Y))
 
 ;キーボードの状態を管理するやつ
 dim isKeyDown@KursorKey

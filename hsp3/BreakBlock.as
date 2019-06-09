@@ -21,7 +21,7 @@
 	__speed,speed0,\
 	startTime,\
 	__color,\
-	isCleared
+	__isCleared
 
 	#uselib "winmm"
 	#cfunc timeGetTime "timeGetTime"
@@ -36,7 +36,7 @@
 		return __pos.Y+__radius
 
 	#define ready \
-		vecCopy __pos,pos0 :\
+		vcClone __pos,pos0 :\
 		__rad=deg/180*M_PI :\
 		__speed=speed0 :\
 		draw thismod :\
@@ -97,12 +97,12 @@
 	return
 
 	;クリア処理
-	#modfunc clear
-		if isCleared: return
+	#modfunc local clear
 		font "メイリオ",72
-		color $AA,$AA,$FF
+		ccolor "#AAAAFF"
 		pos fdWidth/2-100,fdHeight/2-50
 		mes "Clear!"
+		__isCleared=0
 	return
 #global
 
@@ -180,7 +180,7 @@
 					if v0.Y=bkTop(thismod) {bPos.Y=bkTop(thismod)-_radius}
 					else:if v0.Y=bkBottom(thismod) {bPos.Y=bkBottom(thismod)+_radius}
 				}
-				vecCopy lastHit0,v0: vecCopy lastHit1,v1
+				vcClone lastHit0,v0: vcClone lastHit1,v1
 				rtn=1: break
 			}
 		loop
@@ -189,16 +189,16 @@
 	;線と円の当たり判定
 	;理解できていないメソッド
 	#defcfunc local lineVsCircle array p0,array p1,array center,double radius
-		lineDir=vecSub(p1,p0) ; パドルの方向ベクトル
-		n=lineDir.Y, -lineDir.X      ; パドルの法線
-		vecNormalize n
+		lineDir=vcSub(p1,p0)   ;パドルの方向ベクトル
+		n=lineDir.Y,-lineDir.X ;パドルの法線
+		vcNormalize n
 
-		dir1=vecSub(center,p0)
-		dir2=vecSub(center,p1)
+		dir1=vcSub(center,p0)
+		dir2=vcSub(center,p1)
 
-		dist=abs(vecDot(dir1,n))
-		a1=vecDot(dir1,lineDir)
-		a2=vecDot(dir2,lineDir)
+		dist=abs(vcDot(dir1,n))
+		a1=vcDot(dir1,lineDir)
+		a2=vcDot(dir2,lineDir)
 	return a1*a2<0 & dist<radius
 
 	#modfunc hit var _rad,var _speed
@@ -265,10 +265,11 @@
 	#deffunc local Main
 		fdUpdate
 		dimtype _shps,5
-		news@Paddle _shps,100,5,fdWidth/2,fdHeight-50,"#9999FF",20
+		news@Paddle _shps,100,5,fdWidth/2,fdHeight-50,"#66CCFF",20
+		blockColors="#9999FF","#99FF99","#FF9999","#99FFFF","#FFFF99","#FF99FF","#FFFFFF"
 		repeat 7: i=cnt
 			repeat 5
-				news@Block _shps,80,30,50+i*90,25+cnt*40,"#3399FF"
+				news@Block _shps,80,30,50+i*90,25+cnt*40,blockColors(i)
 			loop
 		loop
 		new@MList shps,_shps

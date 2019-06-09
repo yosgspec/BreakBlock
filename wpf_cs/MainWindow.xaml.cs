@@ -53,7 +53,7 @@ namespace BreakBlock{
 		public float speed;
 		float speed0;
 		Task isStart;
-		string color;
+		Brush color;
 		bool isCleared;
 
 		public float left{get{return (float)pos.X-radius;}}
@@ -64,10 +64,10 @@ namespace BreakBlock{
 		public Ball(List<IDraw> shps,int radius,Vector pos,float deg,float speed,string color){
 			this.shps=shps;
 			this.radius=radius;
-			this.color=color;
 			pos0=pos;
 			this.deg=deg;
 			speed0=speed;
+			this.color=new SolidColorBrush((Color)ConvertFromString(color));
 			ready();
 		}
 
@@ -80,7 +80,7 @@ namespace BreakBlock{
 			Win.Field.Children.Add(ball);
 			ball.Width=radius*2;
 			ball.Height=radius*2;
-			ball.Fill=new SolidColorBrush((Color)ConvertFromString(color));
+			ball.Fill=color;
 			shp=(Shape)ball;
 			draw();
 			isStart=Task.Delay(1500);
@@ -96,7 +96,10 @@ namespace BreakBlock{
 			//動くのは用意してからちょっと待つ
 			if(!isStart.IsCompleted) return;
 			//ボール
-			pos+=new Vector(Math.Cos(rad)*speed,Math.Sin(rad)*speed);
+			pos+=new Vector(
+				Math.Cos(rad)*speed,
+				Math.Sin(rad)*speed
+			);
 			//壁
 			if(left<0 || Win.Field.Width<right) rad=(float)(Math.PI-rad);
 			if(top<0) rad=(float)(2*Math.PI-rad);
@@ -141,7 +144,7 @@ namespace BreakBlock{
 		}
 
 		public bool vsCircle(Vector center,float radius){return false;}
-		public (float,float) hit(float rad,float speed){return (0,0);}
+		public (float,float) hit(float rad,float speed){return (rad,speed);}
 	}
 
 	//ブロッククラス
@@ -205,14 +208,11 @@ namespace BreakBlock{
 			return false;
 		}
 
-		//ないせき
-		static Func<Vector,Vector,double> dotProduct=(a,b)=>a.X*b.X+a.Y*b.Y;
-
 		//線と円の当たり判定
 		//理解できていないメソッド
 		public static bool lineVsCircle(Vector[] p,Vector center,float radius){
-			Vector lineDir=p[1]-p[0];                   //パドルの方向ベクトル
-			Vector n=new Vector(lineDir.Y, -lineDir.X); //パドルの法線
+			Vector lineDir=p[1]-p[0];                  //パドルの方向ベクトル
+			Vector n=new Vector(lineDir.Y,-lineDir.X); //パドルの法線
 			n.Normalize();
 
 			Vector dir1=center-p[0];
@@ -242,6 +242,7 @@ namespace BreakBlock{
 		public float speed;
 
 		public Paddle(Vector size,Vector pos,string color,float accel):base(size,pos,color){
+			this.rad=0;
 			this.accel=accel;
 			this.speed=0;
 		}
@@ -280,10 +281,11 @@ namespace BreakBlock{
 
 			Win.Field=Field;
 			var shps=new List<IDraw>();
-			shps.Add(new Paddle(new Vector(100,5),new Vector(Field.Width/2,Field.Height-50),"#9999FF",20));
+			shps.Add(new Paddle(new Vector(100,5),new Vector(Field.Width/2,Field.Height-50),"#66CCFF",20));
+			string[] blockColors={"#9999FF","#99FF99","#FF9999","#99FFFF","#FFFF99","#FF99FF","#FFFFFF"};
 			for(var i=0;i<7;i++){
 				for(var n=0;n<5;n++){
-					shps.Add(new Block(new Vector(80,30),new Vector(50+i*90,25+n*40),"#3399FF"));
+					shps.Add(new Block(new Vector(80,30),new Vector(50+i*90,25+n*40),blockColors[i]));
 				}
 			}
 			var ball=new Ball(shps,10,new Vector(Field.Width/2,300),90,10,"#FF00FF");
@@ -299,9 +301,5 @@ namespace BreakBlock{
 			};
 			timer.Start();
 		}
-
-		//キーイベント
-		private void keyDown(object sender,KeyEventArgs e){CursorKey.keyDown(e);}
-		private void keyUp(object sender,KeyEventArgs e){CursorKey.keyUp(e);}
 	}
 }

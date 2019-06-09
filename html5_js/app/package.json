@@ -1,0 +1,11 @@
+{
+	"name":"BreakBlock",
+	"version":"1.0.0",
+	"main":"BreakBlock.html",
+	"window":{
+		"title":"BreakBlock",
+		"resizable":false,
+		"width":630,
+		"height":474
+	}
+}

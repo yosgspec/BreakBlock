@@ -14,7 +14,6 @@ import time
 import threading
 import math
 from tkinter import messagebox as msg
-from copy import deepcopy,copy
 from BBUtil import *
 
 #ボールクラス
@@ -39,10 +38,10 @@ class Ball:
 		self.__ready()
 
 	def __ready(self):
-		self.pos=deepcopy(self.__pos0)
+		self.pos=self.__pos0.clone()
 		self.__mpos=self.pos
 		self.rad=self.__deg/180*math.pi
-		self.speed=deepcopy(self.__speed0)
+		self.speed=self.__speed0
 		self.__ball=Field.create_oval(
 			self.left,self.top,
 			self.right,self.bottom,
@@ -62,11 +61,11 @@ class Ball:
 		#動くのは用意してからちょっと待つ
 		if self.__isStart.isAlive(): return
 		#ボール
-		self.__mpos=deepcopy(self.pos)
+		self.__mpos=self.pos.clone()
 		self.pos+=Vector(
 			math.cos(self.rad)*self.speed,
 			math.sin(self.rad)*self.speed
-		)
+		);
 		#壁
 		if self.left<0 or float(Field.cget("width"))<self.right: self.rad=math.pi-self.rad
 		if self.top<0: self.rad=2.0*math.pi-self.rad
@@ -127,7 +126,7 @@ class Block:
 		self.shp=self._block
 
 	def update(self):
-		self._mpos=self.pos
+		self._mpos=self.pos.clone()
 		self._draw()
 
 	def _draw(self):
@@ -145,7 +144,7 @@ class Block:
 	#当たり判定
 	def vsCircle(self,bPos,radius):
 		for v in self.__lines:
-			if Block.lineVsCircle(v,bPos,radius):
+			if Block.__lineVsCircle(v,bPos,radius):
 				if v[0].X==v[1].X:
 					if v[0].X==self.left: bPos.X=self.left-radius
 					elif v[0].X==self.right: bPos.X=self.right+radius
@@ -158,9 +157,9 @@ class Block:
 
 	#線と円の当たり判定
 	#理解できていないメソッド
-	def lineVsCircle(p,center,radius):
-		lineDir=p[1]-p[0]                     #パドルの方向ベクトル
-		n=Vector(lineDir.Y, -lineDir.X) #パドルの法線
+	def __lineVsCircle(p,center,radius):
+		lineDir=p[1]-p[0]              #パドルの方向ベクトル
+		n=Vector(lineDir.Y,-lineDir.X) #パドルの法線
 		n.Normalize()
 
 		dir1=center-p[0]
@@ -190,12 +189,12 @@ class Paddle(Block):
 
 	#うごく
 	def update(self):
-		self._mpos=deepcopy(self.pos)
-		if CursorKey.left and 0<self.left:
+		self._mpos=self.pos.clone()
+		if CursorKey.left() and 0<self.left:
 			self.speed=self.accel
 			self.rad=math.pi
 			self.pos.X-=self.speed
-		elif CursorKey.right and self.right<float(Field.cget("width")):
+		elif CursorKey.right() and self.right<float(Field.cget("width")):
 			self.speed=self.accel
 			self.rad=0
 			self.pos.X+=self.speed
@@ -216,8 +215,9 @@ class MainWindow:
 		global Field
 		Field=field
 		shps=[]
-		shps.append(Paddle(Vector(100,5),Vector(float(Field.cget("width"))/2,float(Field.cget("height"))-50),"#9999FF",20))
-		shps.extend([Block(Vector(80,30),Vector(50+i*90,25+n*40),"#3399FF") 
+		shps.append(Paddle(Vector(100,5),Vector(float(Field.cget("width"))/2,float(Field.cget("height"))-50),"#66CCFF",20))
+		blockColors=["#9999FF","#99FF99","#FF9999","#99FFFF","#FFFF99","#FF99FF","#FFFFFF"]
+		shps.extend([Block(Vector(80,30),Vector(50+i*90,25+n*40),blockColors[i]) 
 			for i in range(7)
 				for n in range(5)])
 		ball=Ball(shps,10,Vector(float(Field.cget("width"))/2,300),90,10,"#FF00FF")
@@ -228,5 +228,3 @@ class MainWindow:
 			ball.update()
 			root.after(33,update)
 		update()
-		root.bind("<Key>",CursorKey.keyDown)
-		root.bind("<KeyRelease>",CursorKey.keyUp)
