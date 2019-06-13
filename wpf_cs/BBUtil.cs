@@ -4,7 +4,7 @@ using System.Windows.Input;
 namespace BBUtil{
 	//キーボードの状態を管理するやつ
 	static class CursorKey{
-		bool _left,_up,_right,_down;
+		static bool _left,_up,_right,_down;
 		public static bool left{get{return _left;}}
 		public static bool up{get{return _up;}}
 		public static bool right{get{return _right;}}

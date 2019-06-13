@@ -275,9 +275,6 @@
 		new@MList shps,_shps
 		new@Ball _ball,shps,10,fdWidth/2,300,90,10,"#FF00FF"
 
-		p1=10,10: p2=90,10: _pos=76,166
-		mes lineVsCircle@Block(p1,p2,_pos,10)
-
 		;インターバル
 		*interval
 			redraw 0
