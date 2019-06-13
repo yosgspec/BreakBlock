@@ -45,14 +45,14 @@ const BBUtil={
 
 	//キーボードの状態を管理するやつ
 	CursorKey: (()=>{
-		var up=false;
 		var left=false;
+		var up=false;
 		var right=false;
 		var down=false;
 
 		class CursorKey{
-			static get up(){return lup}
 			static get left(){return left;}
+			static get up(){return lup}
 			static get right(){return right;}
 			static get down(){return down;}
 
@@ -63,8 +63,8 @@ const BBUtil={
 		function keyState(state){
 			return e=>{
 				switch(e.key){
-					case "ArrowUp": up=state; break;
 					case "ArrowLeft": left=state; break;
+					case "ArrowUp": up=state; break;
 					case "ArrowRight": right=state; break;
 					case "ArrowDown": down=state; break;
 				}

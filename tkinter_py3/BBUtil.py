@@ -29,13 +29,12 @@ class Vector:
 
 #キーボードの状態を管理するやつ
 class CursorKey:
-	__up=False
 	__left=False
+	__up=False
 	__right=False
 	__bottom=False
-	@property
-	def up():return CursorKey.__up
 	def left(): return CursorKey.__left
+	def up():return CursorKey.__up
 	def right():return CursorKey.__right
 	def bottom():return CursorKey.__bottom
 	def keyDown(e):return CursorKey.__keyState(True)(e)
@@ -43,8 +42,8 @@ class CursorKey:
 	def __keyState(state):
 		def keyState(e):
 			key=e.keysym
-			if key=="Up": CursorKey.__up=state
-			elif key=="Left": CursorKey.__left=state
+			if key=="Left": CursorKey.__left=state
+			elif key=="Up": CursorKey.__up=state
 			elif key=="Right": CursorKey.__right=state
 			elif key=="Down": CursorKey.__down=state
 		return  keyState

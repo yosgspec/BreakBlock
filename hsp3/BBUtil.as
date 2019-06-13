@@ -76,13 +76,13 @@
 ;キーボードの状態を管理するやつ
 dim isKeyDown@KursorKey
 #module KursorKey
-	#const keyUp 38
 	#const keyLeft 37
+	#const keyUp 38
 	#const keyRight 39
 	#const keyBottom 40
 
-	#define up keyState@KursorKey(keyUp@KursorKey)
 	#define left keyState@KursorKey(keyLeft@KursorKey)
+	#define up keyState@KursorKey(keyUp@KursorKey)
 	#define right keyState@KursorKey(keyRight@KursorKey)
 	#define bottom keyState@KursorKey(keyBottom@KursorKey)
 

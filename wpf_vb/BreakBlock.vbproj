@@ -17,6 +17,10 @@
         <Configuration>Release</Configuration>
         <!-- コード最適化の有無(true=有) -->
         <Optimize>true</Optimize>
+        <!-- VBのOption Infer(型推論)をON=trueにする(デフォルトOFF=false) -->
+        <OptionInfer>true</OptionInfer>
+        <!-- VBのオーバーフローチェックを無効化する(デフォルトOFF=false) -->
+        <RemoveIntegerChecks>true</RemoveIntegerChecks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -27,7 +31,7 @@
         <Page Include="MainWindow.xaml" />
 
         <!-- CSファイル -->
-        <Compile Include="*.cs" />
+        <Compile Include="*.vb" />
 
         <!-- 参照の追加 -->
         <Reference Include="System" />
@@ -36,9 +40,14 @@
         <Reference Include="PresentationCore" />
         <Reference Include="PresentationFramework" />
        	<Reference Include="System.ValueTuple" />
+
+
+        <!-- 名前空間の追加 -->
+        <Import Include="System" />
+        <Import Include="Microsoft.VisualBasic" />
     </ItemGroup>
 
     <!-- .targets -->
-    <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+    <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
 
 </Project>
