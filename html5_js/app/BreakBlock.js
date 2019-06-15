@@ -62,14 +62,31 @@ const Ball=(()=>{
 
 			//動くのは用意してからちょっと待つ
 			if(!this[isStart]) return this[draw]();
+
 			//ボール
 			this.pos.addSet(new Vector(
 				Math.cos(this.rad)*this.speed,
 				Math.sin(this.rad)*this.speed
 			));
+
 			//壁
-			if(this.left<0 || Field.width<this.right) this.rad=Math.PI-this.rad;
-			if(this.top<0) this.rad=2*Math.PI-this.rad;
+			if(this.left<0){
+				this.pos.X=this.radius;
+				this.rad=Math.PI-this.rad;
+			}
+			else if(Field.width<this.right){
+				this.pos.X=Field.width-this.radius;
+				this.rad=Math.PI-this.rad;
+			}
+			if(this.top<0){
+				this.pos.Y=this.radius;
+				this.rad=2*Math.PI-this.rad;
+			}
+/*			else if(Field.height<this.bottom){
+				this.pos.Y=Field.height-this.radius;
+				this.rad=2*Math.PI-this.rad;
+			}*/
+
 			//ボールロスト
 			if(Field.height<this.top){
 				this.ready();

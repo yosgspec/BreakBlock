@@ -60,15 +60,28 @@ class Ball:
 
 		#動くのは用意してからちょっと待つ
 		if self.__isStart.isAlive(): return
+
 		#ボール
 		self.__mpos=self.pos.clone()
 		self.pos+=Vector(
 			math.cos(self.rad)*self.speed,
 			math.sin(self.rad)*self.speed
 		);
+
 		#壁
-		if self.left<0 or float(Field.cget("width"))<self.right: self.rad=math.pi-self.rad
-		if self.top<0: self.rad=2.0*math.pi-self.rad
+		if self.left<0:
+			self.pos.X=self.radius
+			self.rad=math.pi-self.rad
+		elif float(Field.cget("width"))<self.right:
+			self.pos.X=float(Field.cget("width"))-self.radius
+			self.rad=math.pi-self.rad
+		if self.top<0:
+			self.pos.Y=self.radius
+			self.rad=2.0*math.pi-self.rad
+		"""elif float(Field.cget("height"))<self.bottom:
+			self.pos.Y=float(Field.cget("height"))-self.radius
+			self.rad=2.0*math.pi-self.rad"""
+
 		#ボールロスト
 		if float(Field.cget("height"))<self.top:
 			Field.delete(self.__ball)

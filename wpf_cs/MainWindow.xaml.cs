@@ -100,9 +100,25 @@ namespace BreakBlock{
 				Math.Cos(rad)*speed,
 				Math.Sin(rad)*speed
 			);
+
 			//壁
-			if(left<0 || Win.Field.Width<right) rad=(float)(Math.PI-rad);
-			if(top<0) rad=(float)(2*Math.PI-rad);
+			if(left<0){
+				pos.X=radius;
+				rad=(float)(Math.PI-rad);
+			}
+			else if(Win.Field.Width<right){
+				pos.X=Win.Field.Width-radius;
+				rad=(float)(Math.PI-rad);
+			}
+			if(top<0){
+				pos.Y=radius;
+				rad=(float)(2*Math.PI-rad);
+			}
+/*			else if(Win.Field.Height<bottom){
+				pos.Y=Win.Field.Height-radius;
+				rad=(float)(2*Math.PI-rad);
+			}*/
+
 			//ボールロスト
 			if(Win.Field.Height<top){
 				Win.Field.Children.Remove(ball);

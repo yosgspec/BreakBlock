@@ -63,14 +63,31 @@
 
 		;動くのは用意してからちょっと待つ
 		if timeGetTime()<startTime: draw thismod: return
+
 		;ボール
 		__pos.X+=cos(__rad)*__speed
 		__pos.Y+=sin(__rad)*__speed
+
 		;壁
-		if blLeft(thismod)<0 | fdWidth<blRight(thismod): __rad=M_PI-__rad
-		if blTop(thismod)<0: __rad=M_PI*2-__rad
+		if blLeft(thismod)<0 {
+			__pos.X=__radius
+			__rad=M_PI-__rad
+		}
+		else:if fdWidth<blRight(thismod) {
+			__pos.X=double(fdWidth)-__radius
+			__rad=M_PI-__rad
+		}
+		if blTop(thismod)<0 {
+			__pos.Y=__radius
+			__rad=M_PI*2-__rad
+		}
+/*		else:if fdHeight<blBottom(thismod) {
+			__pos.Y=double(fdHeight)-__radius
+			__rad=M_PI*2-__rad
+		}*/
+
 		;ボールロスト
-		if(fdHeight<blTop(thismod)){
+		if fdHeight<blTop(thismod) {
 			ready
 			return
 		}

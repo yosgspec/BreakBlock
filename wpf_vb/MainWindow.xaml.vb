@@ -107,6 +107,7 @@ NameSpace BreakBlock
 
 			'動くのは用意してからちょっと待つ
 			If Not isStart.IsCompleted Then Exit Sub
+
 			'ボール
 			pos+=New Vector(
 				Math.Cos(rad)*speed,
@@ -114,8 +115,21 @@ NameSpace BreakBlock
 			)
 
 			'壁
-			If left<0 Or Win.Field.Width<right Then rad=CSng(Math.PI-rad)
-			If top<0 Then rad=CSng(2*Math.PI-rad)
+			If left<0 Then
+				pos.X=radius
+				rad=CSng(Math.PI-rad)
+			ElseIf Win.Field.Width<right Then
+				pos.X=Win.Field.Width-radius
+				rad=CSng(Math.PI-rad)
+			End If
+			If top<0 Then
+				pos.Y=radius
+				rad=CSng(2*Math.PI-rad)
+'			ElseIf Win.Field.Height<bottom Then
+'				pos.Y=Win.Field.Height-radius
+'				rad=CSng(2*Math.PI-rad)
+			End If
+
 			'ボールロスト
 			If Win.Field.Height<top Then
 				Win.Field.Children.Remove(_ball)
