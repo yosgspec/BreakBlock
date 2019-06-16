@@ -333,7 +333,7 @@ NameSpace BreakBlock
 
 			'インターバル
 			Dim timer As New DispatcherTimer()
-			timer.Interval=TimeSpan.FromMilliseconds(33)
+			timer.Interval=TimeSpan.FromMilliseconds(31)'(33)
 			AddHandler timer.Tick,Sub(sender,e)
 				For Each v In shps
 					v.update()

@@ -308,7 +308,7 @@ namespace BreakBlock{
 
 			//インターバル
 			var timer=new DispatcherTimer();
-			timer.Interval=TimeSpan.FromMilliseconds(33);
+			timer.Interval=TimeSpan.FromMilliseconds(31);//(33);
 			timer.Tick+=(sender,e)=>{
 				foreach(var v in shps){
 					v.update();
