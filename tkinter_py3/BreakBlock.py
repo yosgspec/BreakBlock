@@ -222,9 +222,6 @@ class Paddle(Block):
 #メインクラス
 class MainWindow:
 	def MainWindow(root,field):
-		def printKey(event):
-			key = event.keysym
-			msg.showinfo("",key)
 		global Field
 		Field=field
 		shps=[]
@@ -236,8 +233,8 @@ class MainWindow:
 		ball=Ball(shps,10,Vector(float(Field.cget("width"))/2,300),90,10,"#FF00FF")
 		#インターバル
 		def update():
+			root.after(33,update)
 			for v in shps:
 				v.update()
 			ball.update()
-			root.after(33,update)
 		update()

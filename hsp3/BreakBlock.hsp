@@ -1,15 +1,16 @@
 #packopt name "BreakBlock"
 #cmpopt varinit 1
 
+#include "user32.as"
+GetWindowLong hwnd,-16
+SetWindowLong hwnd,-16,stat-$20000
+
 #const global fdWidth 640
 #const global fdHeight 480
 #define global fdUpdate \
 	color 0,0,$99 :\
 	boxf 0,0,fdWidth,fdHeight
 screen 0,fdWidth,fdHeight
-#include "user32.as"
-GetWindowLong hwnd,-16
-SetWindowLong hwnd,-16,stat-$20000
 title "BreakBlock"
 
 #include "BreakBlock.as"

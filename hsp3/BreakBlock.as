@@ -23,8 +23,7 @@
 	__color,\
 	__isCleared
 
-	#uselib "winmm"
-	#cfunc timeGetTime "timeGetTime"
+	#include "winmm.as"
 
 	#modcfunc blLeft
 		return __pos.X-__radius
