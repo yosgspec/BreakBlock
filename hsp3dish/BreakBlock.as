@@ -291,6 +291,7 @@
 		new@Ball _ball,shps,10,fdWidth/2,300,90,10,"#FF00FF"
 
 		;インターバル
+		if hspstat=dishstat: iSpan=31: else: iSpan=33
 		*interval
 			redraw 0
 			fdUpdate
@@ -300,7 +301,7 @@
 			loop
 			blUpdate _ball
 			redraw 1
-			await 33
+			await iSpan
 		goto*interval
 	return
 #global

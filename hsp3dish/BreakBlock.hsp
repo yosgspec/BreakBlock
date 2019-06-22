@@ -1,5 +1,6 @@
 #cmpopt varinit 1
 #include "hsp3dish.as"
+#const global dishstat 131329
 
 #packopt name "BreakBlock"
 #const global fdWidth 640
