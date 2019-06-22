@@ -1,0 +1,1 @@
+CreateObject("WScript.Shell").Run "cmd /q /c nw ./app",0

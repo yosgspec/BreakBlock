@@ -1,7 +1,5 @@
 #cmpopt varinit 1
-#include "user32.as"
-GetWindowLong hwnd,-16
-SetWindowLong hwnd,-16,stat-$20000
+#include "hsp3dish.as"
 
 #packopt name "BreakBlock"
 #const global fdWidth 640

@@ -1,0 +1,151 @@
+--- breakblock.html	2019-06-21 04:15:33.381182900 +0900
++++ breakblock.html	2019-06-21 04:32:58.154383700 +0900
+@@ -5,120 +5,20 @@
+     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+     <title>breakblock - HSP3Dish</title>
+     <style>
+-      body {
+-        font-family: arial;
+-        margin: 0;
+-        padding: none;
+-      }
+-
+-      .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
+-      div.emscripten { text-align: center; }      
+-      div.emscripten_border { border: 1px solid black; }
+-      /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+-      canvas.emscripten { border: 0px none; }
+-
+-      #emscripten_logo {
+-        display: inline-block;
+-        margin: 0;
+-      }
+-
+-      .spinner {
+-        height: 30px;
+-        width: 30px;
+-        margin: 0;
+-        margin-top: 20px;
+-        margin-left: 20px;
+-        display: inline-block;
+-        vertical-align: top;
+-
+-        -webkit-animation: rotation .8s linear infinite;
+-        -moz-animation: rotation .8s linear infinite;
+-        -o-animation: rotation .8s linear infinite;
+-        animation: rotation 0.8s linear infinite;
+-
+-        border-left: 5px solid rgb(235, 235, 235);
+-        border-right: 5px solid rgb(235, 235, 235);
+-        border-bottom: 5px solid rgb(235, 235, 235);
+-        border-top: 5px solid rgb(120, 120, 120);
+-        
+-        border-radius: 100%;
+-        background-color: rgb(189, 215, 46);
+-      }
+-
+-      @-webkit-keyframes rotation {
+-        from {-webkit-transform: rotate(0deg);}
+-        to {-webkit-transform: rotate(360deg);}
+-      }
+-      @-moz-keyframes rotation {
+-        from {-moz-transform: rotate(0deg);}
+-        to {-moz-transform: rotate(360deg);}
+-      }
+-      @-o-keyframes rotation {
+-        from {-o-transform: rotate(0deg);}
+-        to {-o-transform: rotate(360deg);}
+-      }
+-      @keyframes rotation {
+-        from {transform: rotate(0deg);}
+-        to {transform: rotate(360deg);}
+-      }
+-
+-      #status {
+-        display: inline-block;
+-        vertical-align: top;
+-        margin-top: 30px;
+-        margin-left: 20px;
+-        font-weight: bold;
+-        color: rgb(120, 120, 120);
+-      }
+-
+-      #progress {
+-        height: 20px;
+-        width: 30px;
+-      }
+-
+-      #controls {
+-        display: inline-block;
+-        float: right;
+-        vertical-align: top;
+-        margin-top: 30px;
+-        margin-right: 20px;
+-      }
+-
+-      #output {
+-        width: 100%;
+-        height: 200px;
+-        margin: 0 auto;
+-        margin-top: 10px;
+-        display: block;
+-        background-color: black;
+-        color: white;
+-        font-family: 'Lucida Console', Monaco, monospace;
+-        outline: none;
++      html,body{
++        overflow: hidden;
+       }
+     </style>
+   </head>
+-  <body>
++  <body style=margin:0px>
+     <div class="spinner" id='spinner'></div>
+     <div class="emscripten" id="status">Downloading...</div>
+-
+-<span id='controls'>
+-  <span><input type="checkbox" id="resize">Resize canvas</span>
+-  <span><input type="checkbox" id="pointerLock" checked>Lock/hide mouse pointer &nbsp;&nbsp;&nbsp;</span>
+-  <span><input type="button" value="Fullscreen" onclick="Module.requestFullScreen(document.getElementById('pointerLock').checked, 
+-                                                                            document.getElementById('resize').checked)">
+-  </span>
+-</span>
+-
+     <div class="emscripten">
+       <progress value="0" max="100" id="progress" hidden=1></progress>
+     </div>
+-
+-    
+     <div class="emscripten_border">
+       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+     </div>
+-    <textarea id="output" rows="8"></textarea>
+-
+     <script type='text/javascript'>
+       var statusElement = document.getElementById('status');
+       var progressElement = document.getElementById('progress');
+@@ -314,7 +214,7 @@
+         ENV.HSP_LIMIT_STEP = "5000";//ブラウザに処理を返すまでの実行ステップ数
+     });
+ 
+-      new DataRequest(0, 9002, 0, 0).open('GET', '/breakblock.ax');
++      new DataRequest(0, 9002, 0, 0).open('GET', '/breakblock.ax');
+ 
+ 
+     function processPackageData(arrayBuffer) {
+@@ -328,7 +228,7 @@
+       Module['HEAPU8'].set(byteArray, ptr);
+       DataRequest.prototype.byteArray = Module['HEAPU8'].subarray(ptr, ptr+byteArray.length);
+ 
+-          DataRequest.prototype.requests["/breakblock.ax"].onload();
++          DataRequest.prototype.requests["/breakblock.ax"].onload();
+ 
+           Module['removeRunDependency']('datafile_breakblock.data');
+ 
+@@ -356,6 +256,5 @@
+ })();
+     </script>
+     <script async type="text/javascript" src="hsp3dish.js"></script>
+-  <p>powered by <a href="http://hsp.tv/make/hsp3dish.html" target="_blank">hsp3dish.js</a> / OpenHSP</p>
+   </body>
+ </html>
